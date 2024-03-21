@@ -28,18 +28,17 @@ int decompressFile();
 int main(int argc, char** argv) {
 	if (argc > 1) {
 		// If there is command line arguments, process them 
-		// and run the application automatically
 		try {
 			return processCommandLineArgs(argc, argv);
 		}
-		catch (std::invalid_argument& e) {
+		catch (std::exception& e) {
 			std::cout << e.what() << std::endl;
 			return 1;
 		}
 	}
 	else {
 		// If there is no command line arguments, prompt the user to 
-		// provide the desired operation and the input / output file paths 
+		// provide the desired operation and the input/output file paths 
 		return promptUserForOperation();
 	}
 }
@@ -66,24 +65,33 @@ int processCommandLineArgs(int argc, char** argv) {
 		// Get provided output file path if the user provided one
 		outputFilePath = argv[3];
 
-		// Put a default extension (".hzip") in the compressed file's path 
-		// if the user didn't provide one
+		// Put a default extension (".hzip") if the user didn't provide one
 		if (!hasExtension(outputFilePath)) {
 			outputFilePath += ZIPPED_EXT;
 		}
 	}
 	else {
 		// If the user didn't provided an output file path, the compressed file will 
-		// be created with the same path as the input file, but with a ".hzip" extension
+		// be created with the same path as the input file
 		outputFilePath = stripExtension(inputFilePath) + ZIPPED_EXT;
 	}
 
 	if (command == ZIP_CMD) {
-		Compressor::zip(inputFilePath, outputFilePath);
+		try {
+			Compressor::zip(inputFilePath, outputFilePath);
+		}
+		catch (std::exception& e) {
+			throw;
+		}
 		std::cout << "File compressed successfully!" << std::endl;
 	} 
 	else {
-		Decompressor::unzip(inputFilePath, outputFilePath);
+		try {
+			Decompressor::unzip(inputFilePath, outputFilePath);
+		}
+		catch (std::exception& e) {
+			throw;
+		}
 		std::cout << "File decompressed successfully!" << std::endl;
 	}
 
@@ -98,8 +106,8 @@ bool isValidCommandLineArgs(int argc, const std::string& command) {
 
 int promptUserForOperation() {
 	std::cout << "Please choose the desired operation:" << std::endl;
-	std::cout << "1. Compress file" << std::endl;
-	std::cout << "2. Decompress file" << std::endl;
+	std::cout << ZIP << ". Compress file" << std::endl;
+	std::cout << UNZIP << ". Decompress file" << std::endl;
 
 	int choice;
 	std::cin >> choice;
