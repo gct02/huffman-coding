@@ -78,7 +78,7 @@ To get a local copy up and running follow these simple example steps.
 ## Usage
 
   ```sh
-  huffman <command> <input_file> [<output-file>]
+  huffman <command> <input_file> [<output_file>]
   ```
 
 **\<command\>**: Specify the operation to perform: "zip" for compression or "unzip" for decompression.<br>
